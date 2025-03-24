@@ -1,0 +1,8 @@
+bleak # Bluetooth support for Python
+click
+pydantic
+pyyaml
+tqdm
+# big dependencies, only for niche use cases
+#matplotlib
+#pandas
