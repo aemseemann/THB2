@@ -336,7 +336,7 @@ class UnsupportedCommand(Exception):
 
 
 class THBClient:
-    def __init__(self, address, *, timeout: float = 30, **kwargs):
+    def __init__(self, address, *, timeout: float = 60, **kwargs):
         self._bleak_client = BleakClient(address, timeout=timeout, **kwargs)
         self._message_queue = asyncio.Queue()
         self._protocol_version = None
@@ -378,10 +378,25 @@ class THBClient:
         return self._protocol_version
     @property
     def sw_version(self):
-        return self._sw_version
+        # BCD-coded
+        major = self._sw_version >> 4
+        minor = self._sw_version & 0xF
+        return f"{major}.{minor}"
+
     @property
     def hw_version(self):
-        return self._hw_version
+        hw_table = {
+            19: "THB2",
+            20: "BTH01",
+            21: "TH05",
+            23: "THB1",
+            24: "TH05D",
+            25: "TH05F",
+            26: "THB3",
+            32: "KEY2",
+            34: "TH04"
+        }
+        return hw_table.get(self._hw_version, f"{self._hw_version:04x}")
 
     @property
     def features(self):
